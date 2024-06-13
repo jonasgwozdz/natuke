@@ -44,8 +44,8 @@ splits = [0.8]
 #edge_groups = ['doi_name', 'doi_bioActivity', 'doi_collectionSpecie', 'doi_collectionSite', 'doi_collectionType']
 edge_group = 'doi_collectionSite'
 #algorithms = ['bert', 'deep_walk', 'node2vec', 'metapath2vec', 'regularization']
-algorithms = ['gpt4']
-k_at = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+algorithms = ['simsearch']
+k_at = [20]
 dynamic_stages = ['1st', '2nd', '3rd', '4th']
 
 # hits@k
@@ -55,9 +55,9 @@ missed_hits = []
 for algorithm in algorithms:
     for k in k_at:
         for split in splits:
-            for iteration in range(1):
+            for iteration in range(10):
                 for dynamic_stage in dynamic_stages:
-                    restored_df = pd.read_csv("{}results/{}_{}_{}_{}_{}_{}.csv".format(path, file_name, algorithm, split, edge_group, iteration, dynamic_stage))
+                    restored_df = pd.read_csv("{}results_simsearch/{}_{}_{}_{}_{}_{}.csv".format(path, file_name, algorithm, split, edge_group, iteration, dynamic_stage))
                     restored_df['true'] = restored_df['true'].apply(literal_eval)
                     restored_df['restored'] = restored_df['restored'].apply(literal_eval)
                     mean_hits, missed = hits_at(k, restored_df.true.to_list(), restored_df.restored.to_list())
@@ -86,9 +86,9 @@ missed_mrr = []
 
 for algorithm in algorithms:
     for split in splits:
-        for iteration in range(1):
+        for iteration in range(10):
             for dynamic_stage in dynamic_stages:
-                restored_df = pd.read_csv("{}results/{}_{}_{}_{}_{}_{}.csv".format(path, file_name, algorithm, split, edge_group, iteration, dynamic_stage))
+                restored_df = pd.read_csv("{}results_simsearch/{}_{}_{}_{}_{}_{}.csv".format(path, file_name, algorithm, split, edge_group, iteration, dynamic_stage))
                 restored_df['true'] = restored_df['true'].apply(literal_eval)
                 restored_df['restored'] = restored_df['restored'].apply(literal_eval)
                 mean_mrr, missed = mrr(restored_df.true.to_list(), restored_df.restored.to_list())
